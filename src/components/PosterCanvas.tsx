@@ -92,8 +92,12 @@ export const PosterCanvas = ({ name, company, headshotUrl }: PosterCanvasProps) 
         ctx.textAlign = 'center';
         ctx.shadowColor = 'rgba(0, 0, 0, 0.8)';
         ctx.shadowBlur = 20;
-        ctx.fillText('LXDGuild Delhi', canvas.width / 2, 280);
-        ctx.fillText('Conference 2025', canvas.width / 2, 350);
+        ctx.fillText('I am Attending', canvas.width / 2, 280);
+
+        // Smaller font for other lines
+        ctx.font = 'bold 36px Inter, sans-serif';
+        ctx.fillText('LXDGuild Delhi', canvas.width / 2, 330);
+        ctx.fillText('Conference 2025', canvas.width / 2, 380);
       };
     };
 
