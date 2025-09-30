@@ -23,7 +23,11 @@ export default function Poster() {
     setAttendee(JSON.parse(data));
   }, [navigate]);
 
-  const shareText = `Excited to be attending GITEX Global 2025 with ${attendee?.company || 'my team'}. Join us at the world's largest Tech & AI show!`;
+  const shareText = `Excited to be part of India's Largest L&D Delhi Conference 2025, hosted by LXDGuild!
+
+Join us in Delhi for an incredible gathering of learning & development leaders, innovators, and changemakers.
+
+#LXDGuild #DelhiConference2025 #LearningAndDevelopment #LXD`;
 
   const handleDownload = () => {
     const canvas = document.querySelector('canvas');
@@ -33,7 +37,7 @@ export default function Poster() {
       if (!blob) return;
       const url = URL.createObjectURL(blob);
       const link = document.createElement('a');
-      link.download = `gitex-2025-poster-${attendee?.name?.replace(/\s+/g, '-').toLowerCase()}.png`;
+      link.download = `lxdguild-delhi-2025-${attendee?.name?.replace(/\s+/g, '-').toLowerCase()}.png`;
       link.href = url;
       link.click();
       URL.revokeObjectURL(url);
@@ -79,12 +83,12 @@ export default function Poster() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-background to-muted">
+    <div className="min-h-screen bg-black text-white">
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
         <header className="text-center mb-12">
-          <img src={logo} alt="GITEX Global 2025" className="h-20 mx-auto mb-6" />
-          <h1 className="text-4xl md:text-6xl font-bold mb-4 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+          <img src={logo} alt="LXDGuild Delhi Conference 2025" className="h-20 mx-auto mb-6" />
+          <h1 className="text-4xl md:text-6xl font-bold mb-4">
             🎊 Your Event Poster is Ready! 🎊
           </h1>
         </header>
@@ -101,8 +105,8 @@ export default function Poster() {
 
           {/* Actions */}
           <div className="space-y-6">
-            <Card className="p-6 backdrop-blur-sm bg-card/95 shadow-xl border-2 border-primary/20">
-              <h2 className="text-2xl font-bold mb-4">Download & Share</h2>
+            <Card className="p-6 bg-black border-2 border-white">
+              <h2 className="text-2xl font-bold mb-4 text-white">Download & Share</h2>
               
               <Button
                 onClick={handleDownload}
@@ -113,9 +117,9 @@ export default function Poster() {
                 Download Poster
               </Button>
 
-              <div className="border-t border-border pt-4 mt-4">
-                <h3 className="font-semibold mb-2">Share Content</h3>
-                <p className="text-sm text-muted-foreground mb-4 p-4 bg-muted/50 rounded-lg">
+              <div className="border-t border-white pt-4 mt-4">
+                <h3 className="font-semibold mb-2 text-white">Share Content</h3>
+                <p className="text-sm text-gray-300 mb-4 p-4 bg-white/5 rounded-lg whitespace-pre-line">
                   {shareText}
                 </p>
 
@@ -139,8 +143,8 @@ export default function Poster() {
               </div>
             </Card>
 
-            <Card className="p-6 backdrop-blur-sm bg-card/95 shadow-xl border-2 border-primary/20">
-              <h3 className="font-semibold mb-4 flex items-center gap-2">
+            <Card className="p-6 bg-black border-2 border-white">
+              <h3 className="font-semibold mb-4 flex items-center gap-2 text-white">
                 <Share2 className="h-5 w-5" />
                 Share on Social Media
               </h3>

@@ -86,21 +86,14 @@ export const PosterCanvas = ({ name, company, headshotUrl }: PosterCanvasProps) 
           ctx.fillText(company, canvas.width / 2, 900);
         }
 
-        // Draw event title
-        ctx.font = 'bold 72px Inter, sans-serif';
+        // Draw event title at top
+        ctx.font = 'bold 56px Inter, sans-serif';
         ctx.fillStyle = '#ffffff';
         ctx.textAlign = 'center';
-        ctx.shadowColor = 'rgba(138, 92, 246, 0.8)';
-        ctx.shadowBlur = 30;
-        ctx.fillText('GITEX GLOBAL', canvas.width / 2, 1200);
-        
-        ctx.font = 'bold 96px Inter, sans-serif';
-        ctx.fillText('2025', canvas.width / 2, 1310);
-
-        ctx.shadowBlur = 0;
-        ctx.font = '36px Inter, sans-serif';
-        ctx.fillStyle = '#c7b3ff';
-        ctx.fillText("I'm Attending! 🎉", canvas.width / 2, 1400);
+        ctx.shadowColor = 'rgba(0, 0, 0, 0.8)';
+        ctx.shadowBlur = 20;
+        ctx.fillText('LXDGuild Delhi', canvas.width / 2, 280);
+        ctx.fillText('Conference 2025', canvas.width / 2, 350);
       };
     };
 

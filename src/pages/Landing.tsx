@@ -3,8 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Card } from '@/components/ui/card';
-import { Upload, Loader2 } from 'lucide-react';
+import { Upload, Loader2, X } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import logo from '@/assets/logo.png';
@@ -14,6 +13,7 @@ export default function Landing() {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
+  const [showEditOverlay, setShowEditOverlay] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
     company: '',
@@ -91,6 +91,7 @@ export default function Landing() {
         headshot_url: headshotUrl,
       }));
 
+      setShowEditOverlay(false);
       navigate('/poster');
     } catch (error) {
       console.error('Error:', error);
@@ -105,114 +106,148 @@ export default function Landing() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-background to-muted">
+    <div className="min-h-screen bg-black text-white">
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
-        <header className="text-center mb-12">
-          <img src={logo} alt="GITEX Global 2025" className="h-20 mx-auto mb-6" />
-          <h1 className="text-4xl md:text-6xl font-bold mb-4 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-            I'm Attending GITEX Global 2025 🎉
+        <header className="text-center mb-16">
+          <img src={logo} alt="LXDGuild" className="h-20 mx-auto mb-8" />
+          <h1 className="text-5xl md:text-7xl font-bold leading-tight">
+            India's Largest<br />
+            L&D<br />
+            Delhi Conference 2025
           </h1>
-          <p className="text-xl text-muted-foreground">
-            👥 787+ attendees already shared
-          </p>
         </header>
 
-        <div className="grid md:grid-cols-2 gap-8 max-w-6xl mx-auto">
-          {/* Preview */}
-          <div className="flex items-center justify-center">
-            <PosterCanvas
-              name={formData.name || 'Your Name'}
-              company={formData.company || 'Your Company'}
-              headshotUrl={headshotPreview}
-            />
-          </div>
-
-          {/* Form */}
-          <div className="flex items-center">
-            <Card className="w-full p-8 backdrop-blur-sm bg-card/95 shadow-xl border-2 border-primary/20">
-              <form onSubmit={handleSubmit} className="space-y-6">
-                <div>
-                  <Label htmlFor="name">Full Name *</Label>
-                  <Input
-                    id="name"
-                    value={formData.name}
-                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    required
-                    placeholder="John Doe"
-                    className="mt-2"
-                  />
-                </div>
-
-                <div>
-                  <Label htmlFor="company">Company Name *</Label>
-                  <Input
-                    id="company"
-                    value={formData.company}
-                    onChange={(e) => setFormData({ ...formData, company: e.target.value })}
-                    required
-                    placeholder="Tech Corp"
-                    className="mt-2"
-                  />
-                </div>
-
-                <div>
-                  <Label htmlFor="headshot">Your Headshot (Optional)</Label>
-                  <div className="mt-2">
-                    <label
-                      htmlFor="headshot"
-                      className="flex items-center justify-center gap-2 border-2 border-dashed border-border rounded-lg p-6 hover:border-primary transition-colors cursor-pointer bg-muted/50"
-                    >
-                      <Upload className="h-5 w-5" />
-                      <span className="text-sm">
-                        {headshotFile ? headshotFile.name : 'Click to upload'}
-                      </span>
-                    </label>
-                    <Input
-                      id="headshot"
-                      type="file"
-                      accept="image/*"
-                      onChange={handleFileChange}
-                      className="hidden"
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <Label htmlFor="email">Registered Email *</Label>
-                  <Input
-                    id="email"
-                    type="email"
-                    value={formData.email}
-                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    required
-                    placeholder="john@techcorp.com"
-                    className="mt-2"
-                  />
-                  <p className="text-xs text-muted-foreground mt-1">
-                    Use the email you registered with
-                  </p>
-                </div>
-
-                <Button
-                  type="submit"
-                  disabled={loading}
-                  className="w-full h-12 text-lg font-semibold"
-                  size="lg"
-                >
-                  {loading ? (
-                    <>
-                      <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                      Verifying...
-                    </>
-                  ) : (
-                    'Verify Email & Continue'
-                  )}
-                </Button>
-              </form>
-            </Card>
+        {/* Poster Display with Edit Button */}
+        <div className="max-w-xl mx-auto relative">
+          <PosterCanvas
+            name={formData.name || 'Your Name'}
+            company={formData.company || 'Your Company'}
+            headshotUrl={headshotPreview}
+          />
+          
+          {/* Edit Button positioned to the right */}
+          <div className="absolute top-1/2 -right-4 md:-right-20 transform -translate-y-1/2">
+            <Button
+              onClick={() => setShowEditOverlay(true)}
+              size="lg"
+              className="rounded-full"
+            >
+              Edit Details
+            </Button>
           </div>
         </div>
+
+        {/* Edit Overlay */}
+        {showEditOverlay && (
+          <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+            <div className="relative max-w-4xl w-full grid md:grid-cols-2 gap-8 items-center">
+              {/* Dimmed Poster Preview */}
+              <div className="opacity-40 hidden md:block">
+                <PosterCanvas
+                  name={formData.name || 'Your Name'}
+                  company={formData.company || 'Your Company'}
+                  headshotUrl={headshotPreview}
+                />
+              </div>
+
+              {/* Form Panel */}
+              <div className="bg-black border-2 border-white rounded-lg p-8 max-h-[90vh] overflow-y-auto">
+                <div className="flex justify-between items-center mb-6">
+                  <h2 className="text-2xl font-bold">Edit Your Details</h2>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => setShowEditOverlay(false)}
+                    className="hover:bg-white/10"
+                  >
+                    <X className="h-5 w-5" />
+                  </Button>
+                </div>
+
+                <form onSubmit={handleSubmit} className="space-y-6">
+                  <div>
+                    <Label htmlFor="name" className="text-white">Full Name *</Label>
+                    <Input
+                      id="name"
+                      value={formData.name}
+                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                      required
+                      placeholder="John Doe"
+                      className="mt-2 bg-black border-white text-white"
+                    />
+                  </div>
+
+                  <div>
+                    <Label htmlFor="company" className="text-white">Company Name *</Label>
+                    <Input
+                      id="company"
+                      value={formData.company}
+                      onChange={(e) => setFormData({ ...formData, company: e.target.value })}
+                      required
+                      placeholder="Your Company"
+                      className="mt-2 bg-black border-white text-white"
+                    />
+                  </div>
+
+                  <div>
+                    <Label htmlFor="headshot" className="text-white">Your Headshot (Optional)</Label>
+                    <div className="mt-2">
+                      <label
+                        htmlFor="headshot"
+                        className="flex items-center justify-center gap-2 border-2 border-white border-dashed rounded-lg p-6 hover:bg-white/10 transition-colors cursor-pointer"
+                      >
+                        <Upload className="h-5 w-5" />
+                        <span className="text-sm">
+                          {headshotFile ? headshotFile.name : 'Click to upload'}
+                        </span>
+                      </label>
+                      <Input
+                        id="headshot"
+                        type="file"
+                        accept="image/*"
+                        onChange={handleFileChange}
+                        className="hidden"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <Label htmlFor="email" className="text-white">Registered Email *</Label>
+                    <Input
+                      id="email"
+                      type="email"
+                      value={formData.email}
+                      onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                      required
+                      placeholder="john@company.com"
+                      className="mt-2 bg-black border-white text-white"
+                    />
+                    <p className="text-xs text-gray-400 mt-1">
+                      Use the email you registered with
+                    </p>
+                  </div>
+
+                  <Button
+                    type="submit"
+                    disabled={loading}
+                    className="w-full h-12 text-lg font-semibold"
+                    size="lg"
+                  >
+                    {loading ? (
+                      <>
+                        <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                        Verifying...
+                      </>
+                    ) : (
+                      'Verify Email & Continue'
+                    )}
+                  </Button>
+                </form>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
