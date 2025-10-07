@@ -76,7 +76,7 @@ export default function Landing() {
       }
 
       // Update attendee
-      await supabase.functions.invoke('update-attendee', {
+      const { data: updateResult } = await supabase.functions.invoke('update-attendee', {
         body: {
           email: formData.email,
           name: formData.name,
@@ -85,14 +85,19 @@ export default function Landing() {
         },
       });
 
+      if (!updateResult?.attendee?.id) {
+        throw new Error('Failed to get attendee ID');
+      }
+
       // Store in sessionStorage and navigate
       sessionStorage.setItem('attendeeData', JSON.stringify({
         ...formData,
+        email: formData.email,
         headshot_url: headshotUrl,
       }));
 
       setShowEditOverlay(false);
-      navigate('/poster');
+      navigate(`/poster/${updateResult.attendee.id}`);
     } catch (error) {
       console.error('Error:', error);
       toast({

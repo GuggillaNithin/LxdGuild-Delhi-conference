@@ -52,7 +52,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      is_poster_owner: {
+        Args: { poster_email: string }
+        Returns: boolean
+      }
     }
     Enums: {
       [_ in never]: never
