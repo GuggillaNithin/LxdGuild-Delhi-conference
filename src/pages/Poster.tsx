@@ -57,34 +57,6 @@ export default function Poster() {
     }
   }, [id, navigate, toast]);
 
-  // Update meta tags for better social sharing
-  useEffect(() => {
-    if (attendee) {
-      const posterUrl = `${window.location.origin}/poster/${id}`;
-      
-      document.title = `${attendee.name} - LXDGuild Delhi Conference 2025`;
-      
-      // Update OG tags
-      const updateMetaTag = (property: string, content: string) => {
-        let tag = document.querySelector(`meta[property="${property}"]`) as HTMLMetaElement;
-        if (!tag) {
-          tag = document.createElement('meta');
-          tag.setAttribute('property', property);
-          document.head.appendChild(tag);
-        }
-        tag.content = content;
-      };
-
-      updateMetaTag('og:title', `${attendee.name} - LXDGuild Delhi Conference 2025`);
-      updateMetaTag('og:description', `Join ${attendee.name} at India's Largest L&D Delhi Conference 2025!`);
-      updateMetaTag('og:url', posterUrl);
-      
-      if (attendee.headshot_url) {
-        updateMetaTag('og:image', attendee.headshot_url);
-      }
-    }
-  }, [attendee, id]);
-
   const shareText = `Excited to be part of India's Largest L&D Delhi Conference 2025, hosted by LXDGuild!
 
 Join us in Delhi for an incredible gathering of learning & development leaders, innovators, and changemakers.
@@ -142,73 +114,19 @@ Join us in Delhi for an incredible gathering of learning & development leaders, 
     }
   };
 
-  const handleShare = async (platform: string) => {
-    const canvas = document.querySelector('canvas');
-    if (!canvas) return;
+  const handleShare = (platform: string) => {
+    const encodedText = encodeURIComponent(shareText);
+    const posterLink = encodeURIComponent(`${window.location.origin}/poster/${id}`);
+    const urls: Record<string, string> = {
+      linkedin: `https://www.linkedin.com/sharing/share-offsite/?url=${posterLink}`,
+      facebook: `https://www.facebook.com/sharer/sharer.php?u=${posterLink}&quote=${encodedText}`,
+      twitter: `https://twitter.com/intent/tweet?text=${encodedText}%0A%0A${posterLink}`,
+      whatsapp: `https://wa.me/?text=${encodedText}%0A%0A${posterLink}`,
+    };
 
-    // Convert canvas to blob
-    canvas.toBlob(async (blob) => {
-      if (!blob) return;
-
-      const fileName = `lxdguild-delhi-2025-${attendee?.name?.replace(/\s+/g, '-').toLowerCase()}.png`;
-      const file = new File([blob], fileName, { type: 'image/png' });
-
-      // Try Web Share API first (works on mobile and some desktop browsers)
-      if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
-        try {
-          await navigator.share({
-            title: 'LXDGuild Delhi Conference 2025',
-            text: shareText,
-            files: [file],
-          });
-          
-          toast({
-            title: "Shared successfully!",
-            description: "Your poster has been shared.",
-          });
-          return;
-        } catch (error: any) {
-          // User cancelled or share failed, continue to fallback
-          if (error.name !== 'AbortError') {
-            console.error('Share failed:', error);
-          }
-        }
-      }
-
-      // Fallback: Download image and open platform share with text + link
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.download = fileName;
-      link.href = url;
-      link.click();
-      URL.revokeObjectURL(url);
-
-      // Copy share text
-      await navigator.clipboard.writeText(shareText);
-
-      const encodedText = encodeURIComponent(shareText);
-      const posterLink = encodeURIComponent(`${window.location.origin}/poster/${id}`);
-      
-      const urls: Record<string, string> = {
-        linkedin: `https://www.linkedin.com/sharing/share-offsite/?url=${posterLink}`,
-        facebook: `https://www.facebook.com/sharer/sharer.php?u=${posterLink}&quote=${encodedText}`,
-        twitter: `https://twitter.com/intent/tweet?text=${encodedText}%0A%0A${posterLink}`,
-        whatsapp: `https://wa.me/?text=${encodedText}%0A%0A${posterLink}`,
-      };
-
-      toast({
-        title: "Image downloaded & text copied!",
-        description: "Upload the downloaded image and paste the text in your post.",
-        duration: 5000,
-      });
-
-      // Small delay to let user see the toast
-      setTimeout(() => {
-        if (urls[platform]) {
-          window.open(urls[platform], '_blank', 'width=600,height=400');
-        }
-      }, 500);
-    }, 'image/png');
+    if (urls[platform]) {
+      window.open(urls[platform], '_blank', 'width=600,height=400');
+    }
   };
 
   const handleEdit = () => {
@@ -346,9 +264,6 @@ Join us in Delhi for an incredible gathering of learning & development leaders, 
                 <Share2 className="h-5 w-5" />
                 Share on Social Media
               </h3>
-              <p className="text-sm text-gray-400 mb-4">
-                Click to share your poster image with caption text
-              </p>
               
               <div className="grid grid-cols-2 gap-3">
                 <Button
@@ -380,10 +295,6 @@ Join us in Delhi for an incredible gathering of learning & development leaders, 
                   WhatsApp
                 </Button>
               </div>
-              
-              <p className="text-xs text-gray-500 mt-3">
-                💡 On mobile: image + text shared directly. On desktop: image downloads + text copies for easy posting.
-              </p>
             </Card>
 
             <Button
