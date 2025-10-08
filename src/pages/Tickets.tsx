@@ -18,10 +18,10 @@ export default function Tickets() {
           <div className="mb-8">
             <Ticket className="h-24 w-24 mx-auto text-primary mb-6" />
             <h2 className="text-3xl font-bold mb-4">
-              Join us at GITEX Global 2025!
+              Join us at LXDGUILD Delhi Conference 2025!
             </h2>
             <p className="text-lg text-muted-foreground mb-2">
-              The world's largest Tech & AI show
+              The world's largest L&D Conference 
             </p>
             <p className="text-muted-foreground">
               Get your ticket now to create your personalized event poster and be part of the biggest tech event of the year.
@@ -32,7 +32,7 @@ export default function Tickets() {
             <Button
               size="lg"
               className="w-full h-14 text-lg font-semibold"
-              onClick={() => window.open('https://tickets.event.com', '_blank')}
+              onClick={() => window.open('https://allevents.in/new-delhi/learning-without-limits-lxd-guild-delhi-instructional-designers-conference-2025-tickets/80008068595965', '_blank')}
             >
               <ExternalLink className="mr-2 h-5 w-5" />
               Get Your Tickets Now
