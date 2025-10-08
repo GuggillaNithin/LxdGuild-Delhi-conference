@@ -114,19 +114,68 @@ Join us in Delhi for an incredible gathering of learning & development leaders, 
     }
   };
 
-  const handleShare = (platform: string) => {
-    const encodedText = encodeURIComponent(shareText);
-    const posterLink = encodeURIComponent(`${window.location.origin}/poster/${id}`);
-    const urls: Record<string, string> = {
-      linkedin: `https://www.linkedin.com/sharing/share-offsite/?url=${posterLink}`,
-      facebook: `https://www.facebook.com/sharer/sharer.php?u=${posterLink}&quote=${encodedText}`,
-      twitter: `https://twitter.com/intent/tweet?text=${encodedText}%0A%0A${posterLink}`,
-      whatsapp: `https://wa.me/?text=${encodedText}%0A%0A${posterLink}`,
-    };
-
-    if (urls[platform]) {
-      window.open(urls[platform], '_blank', 'width=600,height=400');
+  const handleShare = async (platform: string) => {
+    const canvas = document.querySelector('canvas');
+    if (!canvas) {
+      toast({
+        title: "Error",
+        description: "Could not find poster canvas",
+        variant: "destructive",
+      });
+      return;
     }
+
+    // Convert canvas to File for sharing
+    canvas.toBlob(async (blob) => {
+      if (!blob) return;
+
+      const file = new File([blob], 'poster.png', { type: 'image/png' });
+      const shareUrl = `${window.location.origin}/share/${id}`;
+
+      // Try Web Share API first (mobile native sharing)
+      if (navigator.canShare && navigator.canShare({ files: [file] })) {
+        try {
+          await navigator.share({
+            title: 'LXDGuild Delhi Conference 2025',
+            text: shareText,
+            files: [file],
+          });
+          return;
+        } catch (error) {
+          console.log('Web Share failed, falling back to platform-specific');
+        }
+      }
+
+      // Fallback: Auto-download image and open platform dialog
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.download = `lxdguild-delhi-2025-${attendee?.name?.replace(/\s+/g, '-').toLowerCase()}.png`;
+      link.href = url;
+      link.click();
+      URL.revokeObjectURL(url);
+
+      // Copy caption text
+      await navigator.clipboard.writeText(shareText);
+      
+      toast({
+        title: "Ready to share!",
+        description: "Poster downloaded and caption copied. Opening share dialog...",
+      });
+
+      // Open platform-specific dialog
+      const encodedText = encodeURIComponent(shareText);
+      const encodedUrl = encodeURIComponent(shareUrl);
+      const urls: Record<string, string> = {
+        linkedin: `https://www.linkedin.com/sharing/share-offsite/?url=${encodedUrl}`,
+        facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}&quote=${encodedText}`,
+        twitter: `https://twitter.com/intent/tweet?text=${encodedText}%0A%0A${encodedUrl}`,
+        whatsapp: `https://wa.me/?text=${encodedText}%0A%0A${encodedUrl}`,
+      };
+
+      if (urls[platform]) {
+        window.open(urls[platform], '_blank', 'width=600,height=400');
+      }
+    }, 'image/png');
   };
 
   const handleEdit = () => {
