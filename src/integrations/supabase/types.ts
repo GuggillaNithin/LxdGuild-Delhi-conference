@@ -47,45 +47,6 @@ export type Database = {
         }
         Relationships: []
       }
-      social_connections: {
-        Row: {
-          access_token: string
-          created_at: string | null
-          id: string
-          platform: Database["public"]["Enums"]["social_platform"]
-          platform_user_id: string | null
-          platform_username: string | null
-          refresh_token: string | null
-          token_expires_at: string | null
-          updated_at: string | null
-          user_id: string
-        }
-        Insert: {
-          access_token: string
-          created_at?: string | null
-          id?: string
-          platform: Database["public"]["Enums"]["social_platform"]
-          platform_user_id?: string | null
-          platform_username?: string | null
-          refresh_token?: string | null
-          token_expires_at?: string | null
-          updated_at?: string | null
-          user_id: string
-        }
-        Update: {
-          access_token?: string
-          created_at?: string | null
-          id?: string
-          platform?: Database["public"]["Enums"]["social_platform"]
-          platform_user_id?: string | null
-          platform_username?: string | null
-          refresh_token?: string | null
-          token_expires_at?: string | null
-          updated_at?: string | null
-          user_id?: string
-        }
-        Relationships: []
-      }
     }
     Views: {
       [_ in never]: never
@@ -97,12 +58,7 @@ export type Database = {
       }
     }
     Enums: {
-      social_platform:
-        | "linkedin"
-        | "twitter"
-        | "facebook"
-        | "instagram"
-        | "whatsapp_business"
+      [_ in never]: never
     }
     CompositeTypes: {
       [_ in never]: never
@@ -229,14 +185,6 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {
-      social_platform: [
-        "linkedin",
-        "twitter",
-        "facebook",
-        "instagram",
-        "whatsapp_business",
-      ],
-    },
+    Enums: {},
   },
 } as const
